@@ -86,15 +86,6 @@ namespace PicturesFitting
             }
             return b;
         }
-        private Bitmap Place(Bitmap bigBmp,Bitmap smallBmp,Point position)
-        {
-            Graphics g = Graphics.FromImage(bigBmp);
-            g.CompositingMode = CompositingMode.SourceCopy;
-            int x = bigBmp.Width - smallBmp.Width ;
-            int y = bigBmp.Height - smallBmp.Height;
-            g.DrawImage(smallBmp, new Point(x, y));
-            return bigBmp;
-        }
         internal Bitmap ResizeImages(int w)
         {
             if(data == null)
