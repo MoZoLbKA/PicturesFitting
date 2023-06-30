@@ -108,6 +108,11 @@ namespace PicturesFitting
                 heights.Add(data[i].Height);
                 widths.Add(data[i].Width);
             }
+            if (w >= Sum(widths))
+            {
+                throw new Exception("Невозможно преобразовать без потери пропорций, " +
+                    "ПОПРОБУЙТЕ УМЕНЬШИТЬ ШИРИНУ");
+            }
             while (Sum(widths) > w)
             {
                 int sumOfWidths = Sum(widths);
@@ -139,7 +144,8 @@ namespace PicturesFitting
                 compression.Add(ResizeImage(data[i], new Size(widths[i],heights[i])));
             }
             Bitmap tmp = MergeImages(compression);
-            return ResizeImage(tmp, new Size(w, (tmp.Width / (tmp.Width/tmp.Height ))));
+            double coef = w / tmp.Width;
+            return ResizeImage(tmp, new Size(w, (int)(tmp.Height * coef)));
 
         }
     }

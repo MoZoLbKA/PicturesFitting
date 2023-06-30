@@ -17,7 +17,7 @@ namespace PicturesFitting
         public Form1()
         {
             InitializeComponent();
-            row1.Add("1.jpg").Add("2.jpg").Add("3.jpg");
+            row1.Add("1.jpg").Add("4.jpg").Add("2.jpg").Add("3.jpg");
             pictureBox1.Image = row1.GetTreeImages();
              
 
