@@ -17,7 +17,7 @@ namespace PicturesFitting
         {
             InitializeComponent();
             Row row1 = new Row();
-            row1.Add("1.jpg").Add("2.jpg");
+            row1.Add("1.jpg").Add("2.jpg").Add("3.jpg");
             row1.RelocatePictures();
             pictureBox1.Image = row1.compiledRow;
 
