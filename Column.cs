@@ -12,8 +12,10 @@ namespace PicturesFitting
     internal class Column
     {
         List<Bitmap> data = new List<Bitmap>();
-
-        public Bitmap compiledRow { get; private set; }
+        List<Row> rows = new List<Row>();
+        int width;
+        
+        public Bitmap compiledColumn { get; private set; }
         private Bitmap ConvertToBitmap(string fileName)
         {
             Bitmap bitmap;
@@ -31,12 +33,13 @@ namespace PicturesFitting
         }
         public Column Add(Row frame)
         {
+            rows.Add(frame);
             return this;
         }
         public Bitmap GetTreeImages()
         {
-            compiledRow = MergeImages(data);
-            return compiledRow;
+            compiledColumn = MergeImages(data);
+            return compiledColumn;
         }
 
         private Bitmap MergeImages(IEnumerable<Bitmap> images)
@@ -64,17 +67,8 @@ namespace PicturesFitting
                     localHeight += image.Height;
                 }
             }
-            compiledRow = bitmap;
+            compiledColumn = bitmap;
             return bitmap;
-        }
-        private int Sum(List<int> array)
-        {
-            int sum = 0;
-            foreach (var item in array)
-            {
-                sum += item;
-            }
-            return sum;
         }
         private Bitmap ResizeImage(Bitmap img, Size size)
         {
@@ -86,8 +80,13 @@ namespace PicturesFitting
             }
             return b;
         }
-        internal Bitmap ResizeImages(int w)
+        internal Bitmap ResizeImages(int width)
         {
+            for (int i = 0; i < rows.Count; i++)
+            {
+                data.Add(rows[i].ResizeImages(width));
+                rows.RemoveAt(i);
+            }
             if (data == null)
             {
                 return null;
@@ -102,7 +101,7 @@ namespace PicturesFitting
             for (int i = 0; i < data.Count; i++)
             {
                 double ratio = widths[i] / heights[i];
-                int reduct = widths[i] - w;
+                int reduct = widths[i] - width;
                 widths[i] -= reduct;
                 heights[i] = (int)(widths[i] / ratio);
             }
@@ -112,8 +111,9 @@ namespace PicturesFitting
                 compression.Add(ResizeImage(data[i], new Size(widths[i], heights[i])));
             }
             Bitmap tmp = MergeImages(compression);
-            double coef = w / tmp.Width;
-            return ResizeImage(tmp, new Size(w, (int)(tmp.Height * coef)));
+            double coef = width  / tmp.Width;
+            
+            return ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
         }
     }
 }

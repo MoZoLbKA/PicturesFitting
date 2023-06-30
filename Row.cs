@@ -11,8 +11,9 @@ namespace PicturesFitting
     internal class Row
     {
         List<Bitmap> data = new List<Bitmap>();
-        
-        public Bitmap compiledRow { get; private set; }
+        public List<Column> columns = new List<Column>();  
+        public Bitmap rawImages { get; private set; }
+        public Bitmap compression { get; private set; }
         private Bitmap ConvertToBitmap(string fileName)
         {
             Bitmap bitmap;
@@ -30,12 +31,13 @@ namespace PicturesFitting
         }
         public Row Add(Column frame)
         {
+            columns.Add(frame);
             return this;
         }
         public Bitmap GetTreeImages()
         {
-            compiledRow = MergeImages(data);
-            return compiledRow;
+            rawImages = MergeImages(data);
+            return rawImages;
         }
 
         private Bitmap MergeImages(IEnumerable<Bitmap> images)
@@ -63,7 +65,7 @@ namespace PicturesFitting
                     localWidth += image.Width;
                 }
             }
-            compiledRow = bitmap;
+            rawImages = bitmap;
             return bitmap;
         }
         private int Sum(List<int> array)
@@ -85,8 +87,13 @@ namespace PicturesFitting
             }
             return b;
         }
-        internal Bitmap ResizeImages(int w)
+        internal Bitmap ResizeImages(int width)
         {
+            for (int i= 0; i < columns.Count; i++)
+            {
+                data.Add(columns[i].ResizeImages(width));
+                columns.RemoveAt(i);
+            }  
             if(data == null)
             {
                 return null;
@@ -98,18 +105,14 @@ namespace PicturesFitting
                 heights.Add(data[i].Height);
                 widths.Add(data[i].Width);
             }
-            if (w >= Sum(widths))
-            {
-                throw new Exception("Невозможно преобразовать без потери пропорций, " +
-                    "ПОПРОБУЙТЕ УМЕНЬШИТЬ ШИРИНУ");
-            }
-            while (Sum(widths) > w)
+            
+            while (Sum(widths) > width)
             {
                 int sumOfWidths = Sum(widths);
                 int sumOfHeight = Sum(heights);
-                if (sumOfWidths > w)
+                if (sumOfWidths > width)
                 {
-                    double coeff = (double)sumOfWidths / w;
+                    double coeff = (double)sumOfWidths / width;
                     for (int i = 0; i < data.Count; i++)
                     {
                         double ratio = widths[i] / heights[i];
@@ -133,9 +136,13 @@ namespace PicturesFitting
             {
                 compression.Add(ResizeImage(data[i], new Size(widths[i],heights[i])));
             }
+            
             Bitmap tmp = MergeImages(compression);
-            double coef = w / tmp.Width;
-            return ResizeImage(tmp, new Size(w, (int)(tmp.Height * coef)));
+            double coef = width / tmp.Width;
+            data = new List<Bitmap>();
+            this.compression = ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
+            data.Add(this.compression);
+            return this.compression;
         }
     }
 }
