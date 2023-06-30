@@ -13,12 +13,12 @@ namespace PicturesFitting
 {
     public partial class Form1 : Form
     {
-        Row row1 = new Row();
+        Column column1 = new Column();
         public Form1()
         {
             InitializeComponent();
-            row1.Add("1.jpg").Add("4.jpg").Add("2.jpg").Add("3.jpg");
-            pictureBox1.Image = row1.GetTreeImages();
+            column1.Add("1.jpg").Add("4.jpg").Add("2.jpg").Add("3.jpg");
+            pictureBox1.Image = column1.GetTreeImages();
              
 
         }
@@ -39,7 +39,7 @@ namespace PicturesFitting
         private void resizeButton_Click(object sender, EventArgs e)
         {
             int w = (int)numericUpDown1.Value;
-            pictureBox1.Image =  row1.ResizeImages(w);
+            pictureBox1.Image =  column1.ResizeImages(w);
         }
     }
 }
