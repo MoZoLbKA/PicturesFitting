@@ -35,13 +35,7 @@ namespace PicturesFitting
             return this;
         }
 
-        public Bitmap GetTreeImages()
-        {
-            compiledColumn = MergeImages(data);
-            return compiledColumn;
-        }
-
-        private Bitmap MergeImages(IEnumerable<Bitmap> images)
+        private Bitmap MergeImages(IEnumerable<Bitmap> images, int marginTop, int marginRight, int marginBot, int marginLeft)
         {
             var enumerable = images as IList<Bitmap> ?? images.ToList();
 
@@ -50,20 +44,20 @@ namespace PicturesFitting
 
             foreach (var image in enumerable)
             {
-                height += image.Height;
+                height += image.Height+marginTop+marginBot;
                 width = image.Width > width
                     ? image.Width
                     : width;
             }
-
+            width +=marginLeft + marginRight;
             var bitmap = new Bitmap(width, height);
             using (var g = Graphics.FromImage(bitmap))
             {
                 var localHeight = 0;
                 foreach (var image in enumerable)
                 {
-                    g.DrawImage(image, 0, localHeight);
-                    localHeight += image.Height;
+                    g.DrawImage(image, marginLeft, localHeight);
+                    localHeight += image.Height+marginTop+marginBot;
                 }
             }
             compiledColumn = bitmap;
@@ -79,7 +73,11 @@ namespace PicturesFitting
             }
             return b;
         }
-        internal Bitmap ResizeImages(int width)
+        internal Bitmap ResizeImages(int width, 
+            int marginTop = 0,int 
+            marginRight = 0,
+            int marginBot = 0,
+            int marginLeft = 0)
         {
             foreach (var item in rows)
             {
@@ -115,7 +113,7 @@ namespace PicturesFitting
                 compression.Add(ResizeImage(data[i], new Size(widths[i], heights[i])));
             }
 
-            Bitmap tmp = MergeImages(compression);
+            Bitmap tmp = MergeImages(compression, marginTop, marginRight, marginBot, marginLeft);
             double coef = width  / tmp.Width;
             compiledColumn = ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
             return compiledColumn;

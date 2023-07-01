@@ -35,7 +35,7 @@ namespace PicturesFitting
             return this;
         }
 
-        private Bitmap MergeImages(IEnumerable<Bitmap> images)
+        private Bitmap MergeImages(IEnumerable<Bitmap> images, int marginTop, int marginRight, int marginBot, int marginLeft)
         {
             var enumerable = images as IList<Bitmap> ?? images.ToList();
 
@@ -44,23 +44,22 @@ namespace PicturesFitting
 
             foreach (var image in enumerable)
             {
-                width += image.Width;
+                width += image.Width+marginLeft+marginRight;
                 height = image.Height > height
                     ? image.Height
                     : height;
             }
-
+            height += marginBot + marginTop;
             var bitmap = new Bitmap(width, height);
             using (var g = Graphics.FromImage(bitmap))
             {
-                var localWidth = 0;
+                var localWidth = marginLeft;
                 foreach (var image in enumerable)
                 {
-                    g.DrawImage(image, localWidth, 0);
-                    localWidth += image.Width;
+                    g.DrawImage(image, localWidth, marginTop);
+                    localWidth += image.Width+marginLeft+marginRight;
                 }
             }
-            rawImages = bitmap;
             return bitmap;
         }
         private int Sum(List<int> array)
@@ -83,7 +82,11 @@ namespace PicturesFitting
             return b;
         }
 
-        internal Bitmap ResizeImages(int width)
+        internal Bitmap ResizeImages(int width,
+            int marginTop = 0, int
+            marginRight = 0,
+            int marginBot = 0,
+            int marginLeft = 0)
         {
             foreach (var item in columns)
             {
@@ -129,11 +132,9 @@ namespace PicturesFitting
                 compression.Add(ResizeImage(data[i], new Size(widths[i], heights[i])));
             }
 
-            Bitmap tmp = MergeImages(compression);
+            Bitmap tmp = MergeImages(compression, marginTop, marginRight, marginBot, marginLeft);
             double coef = width / tmp.Width;
-            data = new List<Bitmap>();
             this.compression = ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
-            data.Add(this.compression);
             return this.compression;
         }
     }
