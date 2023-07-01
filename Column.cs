@@ -12,9 +12,9 @@ namespace PicturesFitting
     internal class Column
     {
         List<Bitmap> data = new List<Bitmap>();
-        List<Row> rows = new List<Row>();
-        int width;
-        
+        Dictionary<Row,int> rows = new Dictionary<Row, int>();
+        const int DEAFAULT_WIDTH = 1000;
+
         public Bitmap compiledColumn { get; private set; }
         private Bitmap ConvertToBitmap(string fileName)
         {
@@ -33,7 +33,7 @@ namespace PicturesFitting
         }
         public Column Add(Row frame)
         {
-            rows.Add(frame);
+            rows.Add(frame,data.Count);
             return this;
         }
         public Bitmap GetTreeImages()
@@ -82,11 +82,15 @@ namespace PicturesFitting
         }
         internal Bitmap ResizeImages(int width)
         {
-            for (int i = 0; i < rows.Count; i++)
+            foreach (var item in rows)
             {
-                data.Add(rows[i].ResizeImages(width));
-                rows.RemoveAt(i);
+                data.Insert(item.Value, item.Key.ResizeImages(width));
             }
+            //for (int i = 0; i < rows.Count; i++)
+            //{
+            //    data.Add(rows[i].ResizeImages(width));
+            //    rows.RemoveAt(i);
+            //}
             if (data == null)
             {
                 return null;
@@ -100,7 +104,7 @@ namespace PicturesFitting
             }
             for (int i = 0; i < data.Count; i++)
             {
-                double ratio = widths[i] / heights[i];
+                double ratio = (double)widths[i] / heights[i];
                 int reduct = widths[i] - width;
                 widths[i] -= reduct;
                 heights[i] = (int)(widths[i] / ratio);
@@ -112,8 +116,8 @@ namespace PicturesFitting
             }
             Bitmap tmp = MergeImages(compression);
             double coef = width  / tmp.Width;
-            
-            return ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
+            compiledColumn = ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
+            return compiledColumn;
         }
     }
 }

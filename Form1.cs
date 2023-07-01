@@ -19,10 +19,12 @@ namespace PicturesFitting
         public Form1()
         {
             InitializeComponent();
-            row1.Add("1.jpg").Add(column1).Add("2.jpg").Add("6.jpg");
-            column1.Add("3.jpg").Add(row2);
+            //порядок не имеет значения
             row2.Add("4.jpg").Add("5.jpg");
-            pictureBox1.Image = row1.GetTreeImages();
+            column1.Add("2.jpg").Add(row2);
+            row1.Add("1.jpg").Add(column1).Add("3.jpg");
+            
+            
         }
 
         private void saveButton_Click(object sender, EventArgs e)
@@ -40,7 +42,7 @@ namespace PicturesFitting
 
         private void resizeButton_Click(object sender, EventArgs e)
         {
-            pictureBox1.Image =  row1.ResizeImages(2000);
+            pictureBox1.Image =  row1.ResizeImages(4000);
         }
     }
 }

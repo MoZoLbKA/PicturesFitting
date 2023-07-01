@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -10,8 +9,8 @@ namespace PicturesFitting
 {
     internal class Row
     {
-        List<Bitmap> data = new List<Bitmap>();
-        public List<Column> columns = new List<Column>();  
+        private List<Bitmap> data = new List<Bitmap>();
+        public Dictionary<Column,int> columns = new Dictionary<Column, int>();
         public Bitmap rawImages { get; private set; }
         public Bitmap compression { get; private set; }
         private Bitmap ConvertToBitmap(string fileName)
@@ -31,7 +30,7 @@ namespace PicturesFitting
         }
         public Row Add(Column frame)
         {
-            columns.Add(frame);
+            columns.Add(frame,data.Count);
             return this;
         }
         public Bitmap GetTreeImages()
@@ -77,7 +76,7 @@ namespace PicturesFitting
             }
             return sum;
         }
-        private Bitmap ResizeImage(Bitmap img,Size size)
+        private Bitmap ResizeImage(Bitmap img, Size size)
         {
             Bitmap b = new Bitmap(size.Width, size.Height);
             using (Graphics g = Graphics.FromImage(b))
@@ -89,54 +88,44 @@ namespace PicturesFitting
         }
         internal Bitmap ResizeImages(int width)
         {
-            for (int i= 0; i < columns.Count; i++)
+            foreach (var item in columns)
             {
-                data.Add(columns[i].ResizeImages(width));
-                columns.RemoveAt(i);
-            }  
-            if(data == null)
+                data.Insert(item.Value,item.Key.ResizeImages(width));
+            } 
+            if (data == null)
             {
                 return null;
             }
-            List<int> heights =new List<int>(data.Count);
-            List<int> widths =new List<int>(data.Count);
+            List<int> heights = new List<int>(data.Count);
+            List<int> widths = new List<int>(data.Count);
             for (int i = 0; i < data.Count; i++)
             {
                 heights.Add(data[i].Height);
                 widths.Add(data[i].Width);
             }
-            
-            while (Sum(widths) > width)
+            int sumOfWidths = Sum(widths);
+            double coeff = (double)sumOfWidths / width;
+            for (int i = 0; i < data.Count; i++)
             {
-                int sumOfWidths = Sum(widths);
-                int sumOfHeight = Sum(heights);
-                if (sumOfWidths > width)
-                {
-                    double coeff = (double)sumOfWidths / width;
-                    for (int i = 0; i < data.Count; i++)
-                    {
-                        double ratio = widths[i] / heights[i];
-                        widths[i] = (int)(widths[i] / coeff);
-                        heights[i] = (int)(widths[i] / ratio);
-                    }
-
-                }
-                    double min = heights.Min();
-                    for (int i = 0; i < data.Count; i++)
-                    {
-                        double ratio = (double)heights[i] / widths[i];
-                        int redusion = (int)(heights[i] - min);
-                        heights[i] -= redusion;
-                        widths[i] = (int)(heights[i] / ratio);
-
-                    }
+                double ratio = (double)widths[i] / heights[i];
+                widths[i] = (int)(widths[i] / coeff);
+                heights[i] = (int)(widths[i] / ratio);
             }
+            int min = heights.Min();
+            for (int i = 0; i < data.Count; i++)
+            {
+                double ratio = (double)widths[i] / heights[i];
+                int reduct = heights[i] - min;
+                heights[i] -= reduct;
+                widths[i] = (int)(heights[i] * ratio);
+            }
+
             List<Bitmap> compression = new List<Bitmap>();
             for (int i = 0; i < data.Count; i++)
             {
-                compression.Add(ResizeImage(data[i], new Size(widths[i],heights[i])));
+                compression.Add(ResizeImage(data[i], new Size(widths[i], heights[i])));
             }
-            
+
             Bitmap tmp = MergeImages(compression);
             double coef = width / tmp.Width;
             data = new List<Bitmap>();
