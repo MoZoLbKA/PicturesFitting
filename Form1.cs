@@ -13,6 +13,9 @@ namespace PicturesFitting
     }
     public partial class Form1 : Form
     {
+        //only for developer :
+        //1)создать абстрактный класс для rows и columns много дубляжа,
+        //2) исправить масштабирование с отсупами
         private Row row1 = new Row();
         private Column column1 = new Column();
         private Row row2 = new Row();
