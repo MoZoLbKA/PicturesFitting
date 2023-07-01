@@ -16,13 +16,17 @@ namespace PicturesFitting
         Row row1 = new Row();
         Column column1 = new Column();
         Row row2 = new Row();
+        Row row3 = new Row();
+        Column column2 = new Column();
         public Form1()
         {
             InitializeComponent();
             //порядок не имеет значения
-            row2.Add("4.jpg").Add("5.jpg").Add("3.jpg");
-            column1.Add("2.jpg").Add(row2);
-            row1.Add("1.jpg").Add(column1).Add("6.jpg");
+            row2.Add("4.jpg").Add(column2);
+            column1.Add(row2).Add("6.jpg");
+            row1.Add("1.jpg").Add(column1).Add("3.jpg");
+            column2.Add(row3).Add("2.jpg");
+            row3.Add("5.jpg").Add("1.jpg");
             
             
         }
@@ -42,7 +46,7 @@ namespace PicturesFitting
 
         private void resizeButton_Click(object sender, EventArgs e)
         {
-            pictureBox1.Image =  row1.ResizeImages(4000);
+            pictureBox1.Image =  row1.ResizeImages(2000);
         }
     }
 }
