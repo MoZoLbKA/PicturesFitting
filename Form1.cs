@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PicturesFitting
 {
-    public enum Padding
+    public enum PaddingImages
     {
         Top,
         Left,
@@ -20,11 +13,11 @@ namespace PicturesFitting
     }
     public partial class Form1 : Form
     {
-        Row row1 = new Row();
-        Column column1 = new Column();
-        Row row2 = new Row();
-        Row row3 = new Row();
-        Column column2 = new Column();
+        private Row row1 = new Row();
+        private Column column1 = new Column();
+        private Row row2 = new Row();
+        private Row row3 = new Row();
+        private Column column2 = new Column();
         public Form1()
         {
             InitializeComponent();
@@ -34,13 +27,13 @@ namespace PicturesFitting
             row1.Add("1.jpg").Add(column1).Add("3.jpg");
             column2.Add(row3).Add("2.jpg");
             row3.Add("5.jpg").Add("1.jpg");
-            
-            
+
+
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            if(pictureBox1.Image != null)
+            if (pictureBox1.Image != null)
             {
                 pictureBox1.Image.Save("output.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
                 MessageBox.Show("Сохранено в debug");
@@ -53,7 +46,12 @@ namespace PicturesFitting
 
         private void resizeButton_Click(object sender, EventArgs e)
         {
-            pictureBox1.Image =  row1.ResizeImages(2000);
+            var paddings = new Dictionary<PaddingImages, int>() { { PaddingImages.Right, 10 },
+                    { PaddingImages.Left, 10 },
+                    { PaddingImages.Top, 10 },
+                    { PaddingImages.Bottom, 10 }, };
+
+            pictureBox1.Image = row1.ResizeImages(2000,paddings);
         }
     }
 }

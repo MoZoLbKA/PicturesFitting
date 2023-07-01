@@ -35,7 +35,7 @@ namespace PicturesFitting
             return this;
         }
 
-        private Bitmap MergeImages(IEnumerable<Bitmap> images, Dictionary<Padding, int> paddings)
+        private Bitmap MergeImages(IEnumerable<Bitmap> images, Dictionary<PaddingImages, int> paddings)
         {
             var enumerable = images as IList<Bitmap> ?? images.ToList();
 
@@ -44,12 +44,12 @@ namespace PicturesFitting
 
             foreach (var image in enumerable)
             {
-                width += image.Width;
+                width += image.Width + paddings[PaddingImages.Right] + paddings[PaddingImages.Left];
                 height = image.Height > height
                     ? image.Height
                     : height;
             }
-           
+            height+= paddings[PaddingImages.Top] + paddings[PaddingImages.Bottom];
             var bitmap = new Bitmap(width, height);
             using (var g = Graphics.FromImage(bitmap))
             {
@@ -57,7 +57,7 @@ namespace PicturesFitting
                 foreach (var image in enumerable)
                 {
                     g.DrawImage(image, localWidth, 0);
-                    localWidth += image.Width;
+                    localWidth += image.Width + paddings[PaddingImages.Right] + paddings[PaddingImages.Left];
                 }
             }
             return bitmap;
@@ -82,14 +82,14 @@ namespace PicturesFitting
             return b;
         }
 
-        internal Bitmap ResizeImages(int width, Dictionary<Padding, int> paddings = null)
+        internal Bitmap ResizeImages(int width, Dictionary<PaddingImages, int> paddings = null)
         {
             if (paddings == null)
             {
-                paddings = new Dictionary<Padding, int>() { { Padding.Right, 0 }, 
-                    { Padding.Left, 0 },
-                    { Padding.Top, 0 }, 
-                    { Padding.Bottom, 0 }, };
+                paddings = new Dictionary<PaddingImages, int>() { { PaddingImages.Right, 0 }, 
+                    { PaddingImages.Left, 0 },
+                    { PaddingImages.Top, 0 }, 
+                    { PaddingImages.Bottom, 0 }, };
             }
             foreach (var item in columns)
             {
@@ -136,7 +136,7 @@ namespace PicturesFitting
             }
 
             Bitmap tmp = MergeImages(compression,paddings);
-            double coef = width / tmp.Width;
+            double coef = (double)width / tmp.Width;
             this.compression = ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
             return this.compression;
         }
