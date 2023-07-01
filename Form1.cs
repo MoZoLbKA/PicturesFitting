@@ -20,9 +20,9 @@ namespace PicturesFitting
         {
             InitializeComponent();
             //порядок не имеет значения
-            row2.Add("4.jpg").Add("5.jpg");
+            row2.Add("4.jpg").Add("5.jpg").Add("3.jpg");
             column1.Add("2.jpg").Add(row2);
-            row1.Add("1.jpg").Add(column1).Add("3.jpg");
+            row1.Add("1.jpg").Add(column1).Add("6.jpg");
             
             
         }

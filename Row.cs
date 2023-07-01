@@ -4,7 +4,6 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 
-
 namespace PicturesFitting
 {
     internal class Row
@@ -23,20 +22,17 @@ namespace PicturesFitting
             }
             return bitmap;
         }
+
         public Row Add(string frame)
         {
             data.Add(ConvertToBitmap(frame));
             return this;
         }
+
         public Row Add(Column frame)
         {
             columns.Add(frame,data.Count);
             return this;
-        }
-        public Bitmap GetTreeImages()
-        {
-            rawImages = MergeImages(data);
-            return rawImages;
         }
 
         private Bitmap MergeImages(IEnumerable<Bitmap> images)
@@ -86,32 +82,40 @@ namespace PicturesFitting
             }
             return b;
         }
+
         internal Bitmap ResizeImages(int width)
         {
             foreach (var item in columns)
             {
                 data.Insert(item.Value,item.Key.ResizeImages(width));
             } 
-            if (data == null)
+
+            if (data == null || data.Count == 0)
             {
                 return null;
             }
+
             List<int> heights = new List<int>(data.Count);
             List<int> widths = new List<int>(data.Count);
+
             for (int i = 0; i < data.Count; i++)
             {
                 heights.Add(data[i].Height);
                 widths.Add(data[i].Width);
             }
+
             int sumOfWidths = Sum(widths);
             double coeff = (double)sumOfWidths / width;
+
             for (int i = 0; i < data.Count; i++)
             {
                 double ratio = (double)widths[i] / heights[i];
                 widths[i] = (int)(widths[i] / coeff);
                 heights[i] = (int)(widths[i] / ratio);
             }
+
             int min = heights.Min();
+
             for (int i = 0; i < data.Count; i++)
             {
                 double ratio = (double)widths[i] / heights[i];
@@ -119,7 +123,6 @@ namespace PicturesFitting
                 heights[i] -= reduct;
                 widths[i] = (int)(heights[i] * ratio);
             }
-
             List<Bitmap> compression = new List<Bitmap>();
             for (int i = 0; i < data.Count; i++)
             {
