@@ -11,6 +11,13 @@ using System.Windows.Forms;
 
 namespace PicturesFitting
 {
+    public enum Padding
+    {
+        Top,
+        Left,
+        Right,
+        Bottom
+    }
     public partial class Form1 : Form
     {
         Row row1 = new Row();
