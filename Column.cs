@@ -1,91 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 namespace PicturesFitting
 {
-    internal class Column
+    internal class Column:DataCollection
     {
-        List<Bitmap> data = new List<Bitmap>();
         Dictionary<Row,int> rows = new Dictionary<Row, int>();
-
         public Bitmap compiledColumn { get; private set; }
 
-        private Bitmap ConvertToBitmap(string fileName)
+        public Column Add(Row frame)
         {
-            Bitmap bitmap;
-            using (Stream bmpStream = File.Open(fileName, FileMode.Open))
-            {
-                Image image = Image.FromStream(bmpStream);
-                bitmap = new Bitmap(image);
-            }
-            return bitmap;
+            rows.Add(frame, data.Count);
+            return this;
         }
         public Column Add(string frame)
         {
             data.Add(ConvertToBitmap(frame));
             return this;
         }
-
-        public Column Add(Row frame)
-        {
-            rows.Add(frame,data.Count);
-            return this;
-        }
-
-        private Bitmap MergeImages(IEnumerable<Bitmap> images, Dictionary<PaddingImages,int> paddings)
+        private Bitmap MergeImages(IEnumerable<Bitmap> images, Dictionary<PaddingImages,int> paddings,double coef)
         {
             var enumerable = images as IList<Bitmap> ?? images.ToList();
-
+            
             var width = 0;
             var height = 0;
-
+            var curPaddings = NormilizePaddings(paddings, coef);
             foreach (var image in enumerable)
             {
-                height += image.Height+paddings[PaddingImages.Top] + paddings[PaddingImages.Bottom];
+                height += image.Height+ curPaddings[PaddingImages.Top] + curPaddings[PaddingImages.Bottom];
                 width = image.Width > width
                     ? image.Width
                     : width;
             }
-            width += paddings[PaddingImages.Left] + paddings[PaddingImages.Right];
             var bitmap = new Bitmap(width, height);
             using (var g = Graphics.FromImage(bitmap))
             {
-                var localHeight = paddings[PaddingImages.Top];
+                var localHeight = curPaddings[PaddingImages.Top];
                 foreach (var image in enumerable)
                 {
-                    g.DrawImage(image,0, localHeight);
-                    localHeight += image.Height + paddings[PaddingImages.Top] + paddings[PaddingImages.Bottom];
+                    g.DrawImage(image, 0, localHeight);
+                    localHeight += image.Height + curPaddings[PaddingImages.Top] + curPaddings[PaddingImages.Bottom];
                 }
             }
             compiledColumn = bitmap;
             return bitmap;
         }
-        private Bitmap ResizeImage(Bitmap img, Size size)
-        {
-            Bitmap b = new Bitmap(size.Width, size.Height);
-            using (Graphics g = Graphics.FromImage(b))
-            {
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(img, 0, 0, size.Width, size.Height);
-            }
-            return b;
-        }
+        
         internal Bitmap ResizeImages(int width,
             Dictionary<PaddingImages, int> paddings)
         {
-            if (paddings == null)
-            {
-                paddings = new Dictionary<PaddingImages, int>() { { PaddingImages.Right, 0 },
-                    { PaddingImages.Left, 0 },
-                    { PaddingImages.Top, 0 },
-                    { PaddingImages.Bottom, 0 }, };
-            }
+            CheckPaddings(paddings);
             foreach (var item in rows)
             {
-                data.Insert(item.Value, item.Key.ResizeImages(width,paddings));
+                data.Insert(item.Value, item.Key.DrawStoryBoard(width,paddings));
             }
             
             if (data == null || data.Count == 0)
@@ -116,9 +85,9 @@ namespace PicturesFitting
             {
                 compression.Add(ResizeImage(data[i], new Size(widths[i], heights[i])));
             }
-
-            Bitmap tmp = MergeImages(compression, paddings);
-            double coef = (double)width  / tmp.Width;
+            double coef = (double)width / compression.Max(x=>x.Height);
+            Bitmap tmp = MergeImages(compression, paddings,coef);
+            coef = (double)width  / tmp.Width;
             compiledColumn = ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
             return compiledColumn;
         }
