@@ -6,10 +6,8 @@ namespace PicturesFitting
 {
     internal class Row:DataCollection
     {
-        public Dictionary<Column,int> columns = new Dictionary<Column, int>();
-        public Bitmap rawImages { get; private set; }
-        public Bitmap compression { get; private set; }
-
+        private Dictionary<Column,int> columns = new Dictionary<Column, int>();
+        
         public Row Add(Column frame)
         {
             columns.Add(frame, data.Count);

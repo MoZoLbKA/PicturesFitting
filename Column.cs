@@ -7,9 +7,8 @@ namespace PicturesFitting
 {
     internal class Column:DataCollection
     {
-        Dictionary<Row,int> rows = new Dictionary<Row, int>();
-        public Bitmap compiledColumn { get; private set; }
-
+        private Dictionary<Row,int> rows = new Dictionary<Row, int>();
+       
         public Column Add(Row frame)
         {
             rows.Add(frame, data.Count);
@@ -44,7 +43,6 @@ namespace PicturesFitting
                     localHeight += image.Height + curPaddings[PaddingImages.Top] + curPaddings[PaddingImages.Bottom];
                 }
             }
-            compiledColumn = bitmap;
             return bitmap;
         }
         private void GetSizesOfImage(List<int> heights, List<int> widths, int width)
