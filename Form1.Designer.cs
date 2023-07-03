@@ -37,18 +37,20 @@
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 189);
+            this.pictureBox1.Location = new System.Drawing.Point(0, 94);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(800, 261);
+            this.pictureBox1.Size = new System.Drawing.Size(800, 356);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(116, 58);
+            this.saveButton.Dock = System.Windows.Forms.DockStyle.Left;
+            this.saveButton.Location = new System.Drawing.Point(0, 0);
+            this.saveButton.MaximumSize = new System.Drawing.Size(10000, 300);
             this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(123, 38);
+            this.saveButton.Size = new System.Drawing.Size(318, 94);
             this.saveButton.TabIndex = 1;
             this.saveButton.Text = "save";
             this.saveButton.UseVisualStyleBackColor = true;
@@ -56,9 +58,11 @@
             // 
             // resizeButton
             // 
-            this.resizeButton.Location = new System.Drawing.Point(518, 66);
+            this.resizeButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.resizeButton.Location = new System.Drawing.Point(318, 0);
+            this.resizeButton.MaximumSize = new System.Drawing.Size(10000, 300);
             this.resizeButton.Name = "resizeButton";
-            this.resizeButton.Size = new System.Drawing.Size(75, 23);
+            this.resizeButton.Size = new System.Drawing.Size(482, 94);
             this.resizeButton.TabIndex = 2;
             this.resizeButton.Text = "resize";
             this.resizeButton.UseVisualStyleBackColor = true;
