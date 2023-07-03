@@ -42,7 +42,7 @@ namespace PicturesFitting
                 var localWidth = 0;
                 foreach (var image in enumerable)
                 {
-                    g.DrawImage(image, localWidth, 0);
+                    g.DrawImage(image, localWidth, curPaddings[PaddingImages.Top]);
                     localWidth += (image.Width + curPaddings[PaddingImages.Right]+ curPaddings[PaddingImages.Left]);
                 }
             }

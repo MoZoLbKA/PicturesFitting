@@ -40,7 +40,7 @@ namespace PicturesFitting
                 var localHeight = curPaddings[PaddingImages.Top];
                 foreach (var image in enumerable)
                 {
-                    g.DrawImage(image, 0, localHeight);
+                    g.DrawImage(image, curPaddings[PaddingImages.Left], localHeight);
                     localHeight += image.Height + curPaddings[PaddingImages.Top] + curPaddings[PaddingImages.Bottom];
                 }
             }
