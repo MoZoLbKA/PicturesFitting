@@ -9,7 +9,6 @@ namespace PicturesFitting
 {
     internal abstract class DataCollection
     {
-
         public virtual List<Bitmap> data { get; private set; } = new List<Bitmap>();
         public Bitmap ConvertToBitmap(string fileName)
         {
@@ -51,6 +50,7 @@ namespace PicturesFitting
                     { PaddingImages.Bottom, 0 }, };
             }
         }
+
         public int Sum(List<int> array)
         {
             int sum = 0;

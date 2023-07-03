@@ -20,7 +20,7 @@ namespace PicturesFitting
             data.Add(ConvertToBitmap(frame));
             return this;
         }
-        private Bitmap MergeImages(IEnumerable<Bitmap> images, Dictionary<PaddingImages,int> paddings,double coef)
+        private  Bitmap  MergeImages(IEnumerable<Bitmap> images, Dictionary<PaddingImages,int> paddings,double coef)
         {
             var enumerable = images as IList<Bitmap> ?? images.ToList();
             
@@ -47,8 +47,17 @@ namespace PicturesFitting
             compiledColumn = bitmap;
             return bitmap;
         }
-        
-        internal Bitmap ResizeImages(int width,
+        private void GetSizesOfImage(List<int> heights, List<int> widths, int width)
+        {
+            for (int i = 0; i < data.Count; i++)
+            {
+                double ratio = (double)widths[i] / heights[i];
+                int reduct = widths[i] - width;
+                widths[i] -= reduct;
+                heights[i] = (int)(widths[i] / ratio);
+            }
+        }
+        internal Bitmap DrawStoryBoard(int width,
             Dictionary<PaddingImages, int> paddings)
         {
             CheckPaddings(paddings);
@@ -70,26 +79,22 @@ namespace PicturesFitting
                 heights.Add(data[i].Height);
                 widths.Add(data[i].Width);
             }
-
-            for (int i = 0; i < data.Count; i++)
-            {
-                double ratio = (double)widths[i] / heights[i];
-                int reduct = widths[i] - width;
-                widths[i] -= reduct;
-                heights[i] = (int)(widths[i] / ratio);
-            }
-
+            GetSizesOfImage(heights, widths, width);
+            return GetCompressionOfData(widths, heights, width, paddings);
+        }
+        private Bitmap GetCompressionOfData(List<int> widths, List<int> heights, int width,
+            Dictionary<PaddingImages, int> paddings)
+        {
             List<Bitmap> compression = new List<Bitmap>();
 
             for (int i = 0; i < data.Count; i++)
             {
                 compression.Add(ResizeImage(data[i], new Size(widths[i], heights[i])));
             }
-            double coef = (double)width / compression.Max(x=>x.Height);
-            Bitmap tmp = MergeImages(compression, paddings,coef);
-            coef = (double)width  / tmp.Width;
-            compiledColumn = ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
-            return compiledColumn;
+            double coef = (double)width / compression.Max(x => x.Height);
+            Bitmap tmp = MergeImages(compression, paddings, coef);
+            coef = (double)width / tmp.Width;
+            return ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
         }
     }
 }

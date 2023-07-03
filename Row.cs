@@ -48,39 +48,14 @@ namespace PicturesFitting
             }
             return bitmap;
         }
-
-        internal Bitmap DrawStoryBoard(int width, Dictionary<PaddingImages, int> paddings = null)
+        private void GetSizesOfImage(List<int> heights, List<int> widths,double coeff)
         {
-            CheckPaddings(paddings);
-            foreach (var item in columns)
-            {
-                data.Insert(item.Value,item.Key.ResizeImages(width,paddings));
-            } 
-
-            if (data == null || data.Count == 0)
-            {
-                return null;
-            }
-
-            List<int> heights = new List<int>(data.Count);
-            List<int> widths = new List<int>(data.Count);
-
-            for (int i = 0; i < data.Count; i++)
-            {
-                heights.Add(data[i].Height);
-                widths.Add(data[i].Width);
-            }
-
-            int sumOfWidths = Sum(widths);
-            double coeff = (double)sumOfWidths / width;
-
             for (int i = 0; i < data.Count; i++)
             {
                 double ratio = (double)widths[i] / heights[i];
                 widths[i] = (int)(widths[i] / coeff);
                 heights[i] = (int)(widths[i] / ratio);
             }
-
             int min = heights.Min();
 
             for (int i = 0; i < data.Count; i++)
@@ -90,18 +65,45 @@ namespace PicturesFitting
                 heights[i] -= reduct;
                 widths[i] = (int)(heights[i] * ratio);
             }
+        }
+        internal Bitmap DrawStoryBoard(int width, Dictionary<PaddingImages, int> paddings = null)
+        {
+            CheckPaddings(paddings);
+            foreach (var item in columns)
+            {
+                data.Insert(item.Value,item.Key.DrawStoryBoard(width,paddings));
+            } 
+
+            if (data == null || data.Count == 0)
+            {
+                return null;
+            }
+
+            List<int> heights = new List<int>(data.Count);
+            List<int> widths = new List<int>(data.Count);
+            for (int i = 0; i < data.Count; i++)
+            {
+                heights.Add(data[i].Height);
+                widths.Add(data[i].Width);
+            }
+            int sumOfWidths = Sum(widths);
+            double coeff = (double)sumOfWidths / width;
+            GetSizesOfImage(heights, widths, coeff);
+            return GetCompressionOfData(widths,heights,width,paddings);
+        }
+
+        private Bitmap GetCompressionOfData(List<int> widths, List<int> heights,int width,
+            Dictionary<PaddingImages,int> paddings)
+        {
             List<Bitmap> compression = new List<Bitmap>();
             for (int i = 0; i < data.Count; i++)
             {
                 compression.Add(ResizeImage(data[i], new Size(widths[i], heights[i])));
             }
-            
-            double coef = (double)width / compression.Max(x=>x.Height);
-            Bitmap tmp = MergeImages(compression,paddings,coef);
+            double coef = (double)width / compression.Max(x => x.Height);
+            Bitmap tmp = MergeImages(compression, paddings, coef);
             coef = (double)width / tmp.Width;
-            this.compression = ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
-            return this.compression;
-
+            return ResizeImage(tmp, new Size(width, (int)(tmp.Height * coef)));
         }
     }
 }
