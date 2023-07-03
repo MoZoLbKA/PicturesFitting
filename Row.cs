@@ -13,6 +13,7 @@ namespace PicturesFitting
             columns.Add(frame, data.Count);
             return this;
         }
+
         public Row Add(string frame)
         {
             data.Add(ConvertToBitmap(frame));
@@ -46,6 +47,7 @@ namespace PicturesFitting
             }
             return bitmap;
         }
+
         private void GetSizesOfImage(List<int> heights, List<int> widths,double coeff)
         {
             for (int i = 0; i < data.Count; i++)
@@ -64,6 +66,7 @@ namespace PicturesFitting
                 widths[i] = (int)(heights[i] * ratio);
             }
         }
+
         internal Bitmap DrawStoryBoard(int width, Dictionary<PaddingImages, int> paddings = null)
         {
             CheckPaddings(paddings);

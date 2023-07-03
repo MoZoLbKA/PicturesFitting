@@ -1,9 +1,7 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-
 
 namespace PicturesFitting
 {
@@ -20,6 +18,7 @@ namespace PicturesFitting
             }
             return bitmap;
         }
+
         public Dictionary<PaddingImages, int> NormilizePaddings(Dictionary<PaddingImages, int> paddings, double coef)
         {
             return new Dictionary<PaddingImages, int>() {
@@ -29,6 +28,7 @@ namespace PicturesFitting
                 { PaddingImages.Right ,(int)(paddings[PaddingImages.Right] / coef )},
         };
         }
+
         public virtual Bitmap ResizeImage(Bitmap img, Size size)
         {
             Bitmap b = new Bitmap(size.Width, size.Height);

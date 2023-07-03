@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 namespace PicturesFitting
 {
@@ -14,11 +12,13 @@ namespace PicturesFitting
             rows.Add(frame, data.Count);
             return this;
         }
+
         public Column Add(string frame)
         {
             data.Add(ConvertToBitmap(frame));
             return this;
         }
+
         private  Bitmap  MergeImages(IEnumerable<Bitmap> images, Dictionary<PaddingImages,int> paddings,double coef)
         {
             var enumerable = images as IList<Bitmap> ?? images.ToList();
@@ -45,6 +45,7 @@ namespace PicturesFitting
             }
             return bitmap;
         }
+
         private void GetSizesOfImage(List<int> heights, List<int> widths, int width)
         {
             for (int i = 0; i < data.Count; i++)
@@ -55,6 +56,7 @@ namespace PicturesFitting
                 heights[i] = (int)(widths[i] / ratio);
             }
         }
+
         internal Bitmap DrawStoryBoard(int width,
             Dictionary<PaddingImages, int> paddings)
         {
@@ -80,6 +82,7 @@ namespace PicturesFitting
             GetSizesOfImage(heights, widths, width);
             return GetCompressionOfData(widths, heights, width, paddings);
         }
+
         private Bitmap GetCompressionOfData(List<int> widths, List<int> heights, int width,
             Dictionary<PaddingImages, int> paddings)
         {
