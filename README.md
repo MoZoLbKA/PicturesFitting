@@ -5,17 +5,17 @@
 Запустить проект и наслаждаться!
 Также можно добавить отступы между картинками.
 Какой постер получился
-#Пример
+# Пример
 # Код: row1.Add("1.jpg").Add("4.jpg").Add("3.jpg").Add("2.jpg");
 ![image](https://github.com/MoZoLbKA/PicturesFitting/assets/90096356/aa9f1411-cdb5-4e3b-9aba-39f1b54de93c)
 
 # Еще пример
-# Код: row2.Add("4.jpg").Add(column2);
+# Код:      
+            row2.Add("4.jpg").Add(column2);
             column1.Add(row2).Add("6.jpg").Add(row3);
             row1.Add("2.jpg").Add(column1).Add("3.jpg");
             column2.Add(row3).Add("2.jpg");
-            row3.Add("5.jpg").Add("1.jpg");
-            
-  ![Uploading image.png…]()
+            row3.Add("5.jpg").Add("1.jpg");                
+![image](https://github.com/MoZoLbKA/PicturesFitting/assets/90096356/0bb69c42-4aea-46ca-a92a-d4d033539ee4)
 
 
